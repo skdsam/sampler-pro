@@ -1,0 +1,45 @@
+# Build directories
+build/
+bin/
+obj/
+*.dir/
+
+# IDE files
+.vscode/
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.xcode
+*.xcworkspace
+*.pws
+*.swp
+*.iml
+
+# JUCE files
+JuceLibraryCode/
+JUCE_artefacts/
+SamplerPro_artefacts/
+
+# Dependency libraries (User specified excluding non-required files)
+# We exclude the entire libs folder because we want a clean repo.
+# Note: If JUCE is intended to be a submodule, it's better to exclude its heavy build artifacts.
+libs/JUCE/extras/
+libs/JUCE/examples/
+libs/JUCE/docs/
+libs/JUCE/modules/*/juce_module_info
+libs/JUCE/CMakeLists.txt.user
+
+# Mac files
+.DS_Store
+
+# Logs
+*.log
+rebuild_log.txt
+verify_v5_fix_log.txt
+full_build_log.txt
+final_build_log.txt
+bpm_build_log.txt
+bpm_fix_v2_log.txt
+build_errors*.txt
