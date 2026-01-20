@@ -232,11 +232,15 @@ void AudioEngine::exportSlices(const juce::File &directory) {
         directory.getChildFile("Slice_" + juce::String(i + 1) + ".wav");
     sliceFile.deleteFile();
 
-    if (auto writer =
-            std::unique_ptr<juce::AudioFormatWriter>(wavFormat.createWriterFor(
-                new juce::FileOutputStream(sliceFile), getSampleRate(),
-                loadedBuffer.getNumChannels(), 16, {}, 0))) {
-      writer->writeFromAudioSampleBuffer(loadedBuffer, startSample, numSamples);
+    auto outputStream = std::make_unique<juce::FileOutputStream>(sliceFile);
+    if (outputStream->openedOk()) {
+      if (auto writer = std::unique_ptr<juce::AudioFormatWriter>(
+              wavFormat.createWriterFor(
+                  outputStream.release(), fileSampleRate,
+                  (unsigned int)loadedBuffer.getNumChannels(), 16, {}, 0))) {
+        writer->writeFromAudioSampleBuffer(loadedBuffer, startSample,
+                                           numSamples);
+      }
     }
   }
 }

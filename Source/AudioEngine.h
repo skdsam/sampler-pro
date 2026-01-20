@@ -19,6 +19,7 @@ public:
   void play();
   void stop();
   void playSlice(int sliceIndex);
+  void setPosition(double seconds) { transportSource.setPosition(seconds); }
 
   bool isPlaying() const { return transportSource.isPlaying(); }
   double getCurrentPosition() const {
@@ -47,6 +48,7 @@ public:
   double getTempo() const {
     return targetBPM > 0 ? targetBPM : analysisResults.bpm;
   }
+  void setLooping(bool shouldLoop) { memorySource->setLooping(shouldLoop); }
 
   juce::AudioProcessorEditor *createEditor() override { return nullptr; }
   bool hasEditor() const override { return false; }

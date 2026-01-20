@@ -15,6 +15,7 @@ MainComponent::MainComponent()
   addAndMakeVisible(zoomSlider);
   addAndMakeVisible(zoomLabel);
   addAndMakeVisible(sequencerToggle);
+  addAndMakeVisible(loopToggle);
   addAndMakeVisible(sequencerComponent);
 
   // Styling
@@ -56,14 +57,21 @@ MainComponent::MainComponent()
   };
 
   playButton.onClick = [this] {
-    audioEngine.play();
-    audioEngine.setSequencerEnabled(true);
-    sequencerToggle.setToggleState(true, juce::dontSendNotification);
+    if (sequencerToggle.getToggleState()) {
+      // Sequencer mode - only start sequencer
+      audioEngine.setSequencerEnabled(true);
+    } else {
+      // Normal mode - play audio from beginning if stopped
+      if (!audioEngine.isPlaying()) {
+        audioEngine.setPosition(0.0);
+      }
+      audioEngine.play();
+    }
   };
   stopButton.onClick = [this] {
     audioEngine.stop();
     audioEngine.setSequencerEnabled(false);
-    sequencerToggle.setToggleState(false, juce::dontSendNotification);
+    audioEngine.setPosition(0.0);
   };
 
   exportMidiButton.onClick = [this] {
@@ -129,6 +137,27 @@ MainComponent::MainComponent()
     audioEngine.setSequencerEnabled(sequencerToggle.getToggleState());
   };
 
+  loopToggle.onClick = [this] {
+    audioEngine.setLooping(loopToggle.getToggleState());
+  };
+
+  waveformComponent.onOnsetRemoved = [this](int index) {
+    audioEngine.getAnalysis().onsets.erase(
+        audioEngine.getAnalysis().onsets.begin() + index);
+    waveformComponent.repaint();
+    sequencerComponent.setNumSlices(
+        (int)audioEngine.getAnalysis().onsets.size());
+  };
+
+  waveformComponent.onOnsetAdded = [this](int samplePosition) {
+    auto &onsets = audioEngine.getAnalysis().onsets;
+    // Insert in sorted order
+    auto it = std::lower_bound(onsets.begin(), onsets.end(), samplePosition);
+    onsets.insert(it, samplePosition);
+    waveformComponent.repaint();
+    sequencerComponent.setNumSlices((int)onsets.size());
+  };
+
   sequencerComponent.onStepChanged = [this](int step, int sliceIndex) {
     audioEngine.setSequenceStep(step, sliceIndex);
   };
@@ -185,6 +214,7 @@ void MainComponent::resized() {
   zoomSlider.setBounds(zoomArea);
 
   sequencerToggle.setBounds(controlArea.removeFromLeft(120).reduced(5));
+  loopToggle.setBounds(controlArea.removeFromLeft(60).reduced(5));
 
   statusLabel.setBounds(controlArea);
 
@@ -231,7 +261,15 @@ void MainComponent::changeListenerCallback(juce::ChangeBroadcaster *source) {
 }
 
 void MainComponent::timerCallback() {
-  waveformComponent.setPlayheadTime(audioEngine.getCurrentPosition());
+  double pos = audioEngine.getCurrentPosition();
+  double length = audioEngine.getLengthInSeconds();
+
+  // Wrap position for loop mode
+  if (length > 0.0 && pos >= length) {
+    pos = std::fmod(pos, length);
+  }
+
+  waveformComponent.setPlayheadTime(pos);
   sequencerComponent.setCurrentStep(audioEngine.getCurrentStep());
 }
 

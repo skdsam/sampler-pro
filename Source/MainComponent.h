@@ -48,6 +48,7 @@ private:
   juce::Slider zoomSlider;
   juce::Label zoomLabel{"zoom", "ZOOM"};
   juce::ToggleButton sequencerToggle{"Sequencer Mode"};
+  juce::ToggleButton loopToggle{"Loop"};
   MidiSequencerComponent sequencerComponent;
   juce::Label tempoLabel{"Tempo:", "Tempo:"};
 

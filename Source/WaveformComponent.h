@@ -24,6 +24,9 @@ public:
     repaint();
   }
   std::function<void(int)> onSliceClicked;
+  std::function<void(int)>
+      onOnsetRemoved;                    // Callback when user removes an onset
+  std::function<void(int)> onOnsetAdded; // Callback when user adds an onset
 
   void setSampleRate(double newSampleRate) { sampleRate = newSampleRate; }
   void setPlayheadTime(double time) {
@@ -73,12 +76,16 @@ public:
       }
 
       // Draw Playhead
-      if (playheadTime >= startTime && playheadTime <= endTime) {
+      double clampedPlayheadTime =
+          juce::jlimit(startTime, endTime, playheadTime);
+      if (playheadTime >= 0.0 && playheadTime <= totalDuration) {
         g.setColour(juce::Colours::red);
-        float playheadX = (float)((playheadTime - startTime) /
+        float playheadX = (float)((clampedPlayheadTime - startTime) /
                                   displayedDuration * bounds.getWidth());
-        g.drawVerticalLine((int)playheadX, (float)bounds.getY(),
-                           (float)bounds.getBottom());
+        if (playheadX >= 0 && playheadX <= bounds.getWidth()) {
+          g.drawVerticalLine((int)playheadX, (float)bounds.getY(),
+                             (float)bounds.getBottom());
+        }
       }
     }
   }
@@ -106,6 +113,12 @@ public:
 
       for (int i = 0; i < (int)onsets->size(); ++i) {
         if (std::abs((*onsets)[i] - clickSample) < dragToleranceSamples) {
+          // Right-click removes the onset
+          if (event.mods.isRightButtonDown()) {
+            if (onOnsetRemoved)
+              onOnsetRemoved(i);
+            return;
+          }
           draggingOnsetIndex = i;
           return;
         }
@@ -129,6 +142,23 @@ public:
       onSliceClicked(sliceIndex);
       clickingSliceIndex = sliceIndex;
     }
+  }
+
+  void mouseDoubleClick(const juce::MouseEvent &event) override {
+    auto bounds = getLocalBounds();
+    double totalDuration = thumbnail.getTotalLength();
+    if (totalDuration <= 0 || onsets == nullptr)
+      return;
+
+    double displayedDuration = totalDuration / zoomLevel;
+    double startTime = scrollPos * (totalDuration - displayedDuration);
+    double clickTime =
+        startTime + (event.x / (double)bounds.getWidth()) * displayedDuration;
+    int clickSample =
+        (int)(clickTime * (sampleRate > 0 ? sampleRate : 44100.0));
+
+    if (onOnsetAdded)
+      onOnsetAdded(clickSample);
   }
 
   void mouseDrag(const juce::MouseEvent &event) override {
