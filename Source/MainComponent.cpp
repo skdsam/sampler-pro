@@ -14,6 +14,8 @@ MainComponent::MainComponent()
   addAndMakeVisible(statusLabel);
   addAndMakeVisible(zoomSlider);
   addAndMakeVisible(zoomLabel);
+  addAndMakeVisible(sequencerToggle);
+  addAndMakeVisible(sequencerComponent);
 
   // Styling
   zoomLabel.setFont(juce::Font(12.0f));
@@ -53,8 +55,16 @@ MainComponent::MainComponent()
     });
   };
 
-  playButton.onClick = [this] { audioEngine.play(); };
-  stopButton.onClick = [this] { audioEngine.stop(); };
+  playButton.onClick = [this] {
+    audioEngine.play();
+    audioEngine.setSequencerEnabled(true);
+    sequencerToggle.setToggleState(true, juce::dontSendNotification);
+  };
+  stopButton.onClick = [this] {
+    audioEngine.stop();
+    audioEngine.setSequencerEnabled(false);
+    sequencerToggle.setToggleState(false, juce::dontSendNotification);
+  };
 
   exportMidiButton.onClick = [this] {
     fileChooser = std::make_unique<juce::FileChooser>(
@@ -115,6 +125,14 @@ MainComponent::MainComponent()
     audioEngine.playSlice(index);
   };
 
+  sequencerToggle.onClick = [this] {
+    audioEngine.setSequencerEnabled(sequencerToggle.getToggleState());
+  };
+
+  sequencerComponent.onStepChanged = [this](int step, int sliceIndex) {
+    audioEngine.setSequenceStep(step, sliceIndex);
+  };
+
   setWantsKeyboardFocus(true);
 
   startTimerHz(60);
@@ -166,10 +184,17 @@ void MainComponent::resized() {
   zoomLabel.setBounds(zoomArea.removeFromLeft(60));
   zoomSlider.setBounds(zoomArea);
 
+  sequencerToggle.setBounds(controlArea.removeFromLeft(120).reduced(5));
+
   statusLabel.setBounds(controlArea);
 
   bounds.reduce(20, 10);
-  waveformComponent.setBounds(bounds.removeFromTop(300));
+
+  waveformComponent.setBounds(bounds.removeFromTop(250));
+
+  auto sequencerArea = bounds.removeFromTop(200).reduced(0, 10);
+  sequencerComponent.setBounds(sequencerArea);
+
   statusLabel.setBounds(bounds.removeFromBottom(40));
 }
 
@@ -198,14 +223,16 @@ void MainComponent::changeListenerCallback(juce::ChangeBroadcaster *source) {
 
     tempoSlider.setValue(analysis.bpm, juce::dontSendNotification);
     waveformComponent.setSampleRate(audioEngine.getFileSampleRate());
-    waveformComponent.setOnsets(
-        &analysis.onsets); // Refresh the pointer/reference
+    waveformComponent.setOnsets(&analysis.onsets);
     waveformComponent.repaint();
+
+    sequencerComponent.setNumSlices((int)analysis.onsets.size());
   }
 }
 
 void MainComponent::timerCallback() {
   waveformComponent.setPlayheadTime(audioEngine.getCurrentPosition());
+  sequencerComponent.setCurrentStep(audioEngine.getCurrentStep());
 }
 
 bool MainComponent::keyPressed(const juce::KeyPress &key) {

@@ -28,6 +28,7 @@ target_sources(SamplerPro PRIVATE
     Source/WaveformComponent.h
     Source/AudioAnalysis.h
     Source/AudioAnalysis.cpp
+    Source/MidiSequencerComponent.h
 )
 
 juce_generate_juce_header(SamplerPro)

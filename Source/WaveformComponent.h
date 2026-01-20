@@ -125,32 +125,47 @@ public:
       }
     }
 
-    if (sliceIndex != -1)
+    if (sliceIndex != -1) {
       onSliceClicked(sliceIndex);
-  }
-
-  void mouseDrag(const juce::MouseEvent &event) override {
-    if (draggingOnsetIndex == -1)
-      return;
-
-    auto bounds = getLocalBounds();
-    double totalDuration = thumbnail.getTotalLength();
-    double displayedDuration = totalDuration / zoomLevel;
-    double startTime = scrollPos * (totalDuration - displayedDuration);
-
-    float dragX = (float)event.x;
-    double dragTime =
-        startTime + (dragX / bounds.getWidth()) * displayedDuration;
-    int dragSample = (int)(dragTime * (sampleRate > 0 ? sampleRate : 44100.0));
-
-    if (onsets != nullptr) {
-      (*onsets)[draggingOnsetIndex] = juce::jlimit(
-          0, (int)thumbnail.getTotalLength() * (int)sampleRate, dragSample);
-      repaint();
+      clickingSliceIndex = sliceIndex;
     }
   }
 
-  void mouseUp(const juce::MouseEvent &) override { draggingOnsetIndex = -1; }
+  void mouseDrag(const juce::MouseEvent &event) override {
+    if (draggingOnsetIndex != -1) {
+      // Marker Drag Logic
+      auto bounds = getLocalBounds();
+      double totalDuration = thumbnail.getTotalLength();
+      double displayedDuration = totalDuration / zoomLevel;
+      double startTime = scrollPos * (totalDuration - displayedDuration);
+
+      float dragX = (float)event.x;
+      double dragTime =
+          startTime + (dragX / bounds.getWidth()) * displayedDuration;
+      int dragSample =
+          (int)(dragTime * (sampleRate > 0 ? sampleRate : 44100.0));
+
+      if (onsets != nullptr) {
+        (*onsets)[draggingOnsetIndex] = juce::jlimit(
+            0, (int)thumbnail.getTotalLength() * (int)sampleRate, dragSample);
+        repaint();
+      }
+    } else if (clickingSliceIndex != -1) {
+      // Slice Drag Logic (DnD)
+      if (auto *container =
+              juce::DragAndDropContainer::findParentDragContainerFor(this)) {
+        if (!container->isDragAndDropActive()) {
+          container->startDragging("Slice:" + juce::String(clickingSliceIndex),
+                                   this);
+        }
+      }
+    }
+  }
+
+  void mouseUp(const juce::MouseEvent &) override {
+    draggingOnsetIndex = -1;
+    clickingSliceIndex = -1;
+  }
 
   std::function<void()> onZoomChanged;
 
@@ -189,6 +204,7 @@ private:
   double zoomLevel = 1.0;
   double scrollPos = 0.0; // 0.0 to 1.0
   int draggingOnsetIndex = -1;
+  int clickingSliceIndex = -1;
 
   // Dummies for default constructor
   juce::AudioFormatManager dummyManager;

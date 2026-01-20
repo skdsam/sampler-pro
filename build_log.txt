@@ -1,0 +1,45 @@
+﻿MSBuild version 17.14.23+b0019275e for .NET Framework
+
+  Checking File Globs
+  SamplerPro_rc_lib.vcxproj -> C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro_rc_lib.dir\Release\SamplerPro_rc_lib.lib
+  MainComponent.cpp
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(62,30): warning C4100: 'index': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(63,41): warning C4100: 'index': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(64,57): warning C4100: 'newName': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(64,30): warning C4100: 'index': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(66,47): warning C4100: 'destData': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(67,50): warning C4100: 'sizeInBytes': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\AudioEngine.h(67,40): warning C4100: 'data': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(44,59): warning C4244: 'argument': conversion from 'const ValueType' to 'float', possible loss of data [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(44,59): warning C4244:         with [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(44,59): warning C4244:         [ [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(44,59): warning C4244:             ValueType=int [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(44,59): warning C4244:         ] [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(98,29): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MidiSequencerComponent.h(125,31): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  (compiling source file '../Source/MainComponent.cpp')
+  
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MainComponent.cpp(21,31): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MainComponent.cpp(210,77): warning C4100: 'y': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\Source\MainComponent.cpp(210,70): warning C4100: 'x': unreferenced parameter [C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro.vcxproj]
+  Generating code
+  Finished generating code
+  SamplerPro.vcxproj -> C:\Users\skdso\.gemini\antigravity\scratch\sampler-pro\build\SamplerPro_artefacts\Release\Sampler Pro.exe

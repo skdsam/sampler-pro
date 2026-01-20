@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AudioEngine.h"
+#include "MidiSequencerComponent.h"
 #include "WaveformComponent.h"
 #include <JuceHeader.h>
 #include <memory>
@@ -46,6 +47,8 @@ private:
   juce::Slider tempoSlider;
   juce::Slider zoomSlider;
   juce::Label zoomLabel{"zoom", "ZOOM"};
+  juce::ToggleButton sequencerToggle{"Sequencer Mode"};
+  MidiSequencerComponent sequencerComponent;
   juce::Label tempoLabel{"Tempo:", "Tempo:"};
 
   juce::Label statusLabel;

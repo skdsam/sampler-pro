@@ -43,9 +43,9 @@ public:
   void exportSlices(const juce::File &directory);
   void exportMidi(const juce::File &file);
 
-  void setTempo(double newBpm) { targetBpm = newBpm; }
+  void setTempo(double newBpm) { targetBPM = newBpm; }
   double getTempo() const {
-    return targetBpm > 0 ? targetBpm : analysisResults.bpm;
+    return targetBPM > 0 ? targetBPM : analysisResults.bpm;
   }
 
   juce::AudioProcessorEditor *createEditor() override { return nullptr; }
@@ -66,9 +66,22 @@ public:
   void getStateInformation(juce::MemoryBlock &destData) override {}
   void setStateInformation(const void *data, int sizeInBytes) override {}
 
+  // Sequencer - Simplified API
+  void setSequencerEnabled(bool enabled);
+  bool isSequencerActive() const { return sequencerEnabled; }
+  void
+  setSequenceStep(int step,
+                  int sliceIndex); // Set which slice plays on step (-1 = none)
+  int getSequenceStep(int step) const;
+  void clearSequence();
+  int getCurrentStep() const { return currentStep; }
+  int getNumSlices() const { return (int)analysisResults.onsets.size(); }
+
 private:
+  void updateSequencerLogic(int numSamples);
+
   juce::AudioFormatManager formatManager;
-  std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
+  std::unique_ptr<juce::MemoryAudioSource> memorySource;
   juce::AudioTransportSource transportSource;
 
   juce::AudioThumbnailCache thumbnailCache{5};
@@ -76,9 +89,32 @@ private:
 
   AudioAnalysis::AnalysisResults analysisResults;
   juce::AudioBuffer<float> loadedBuffer;
-  double targetBpm = 0.0;
   double fileSampleRate = 44100.0;
+  double currentSampleRate = 44100.0;
   double stopAtPosition = -1.0;
+
+  double targetBPM = 120.0;
+
+  // Sequencer State
+  bool sequencerEnabled = false;
+  int currentStep = 0;
+  double samplesPerStep = 0.0;
+  double stepAccumulator = 0.0;
+  int sequencePattern[32] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+
+  // Multi-voice sampler
+  struct SamplerVoice {
+    int startSample = 0;
+    int currentSample = 0;
+    int endSample = 0;
+    bool isActive = false;
+  };
+  static constexpr int NUM_VOICES = 8;
+  SamplerVoice voices[NUM_VOICES];
+  void triggerVoice(int sliceIndex);
+  void processVoices(juce::AudioBuffer<float> &buffer);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioEngine)
 };
